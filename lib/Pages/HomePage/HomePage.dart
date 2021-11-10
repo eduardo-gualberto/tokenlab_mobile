@@ -1,8 +1,8 @@
-import 'dart:convert';
-import '../Models/MovieModel.dart';
-import './Widgets/MovieCard.dart';
+import 'package:desafio_tokenlab/Pages/HomePage/Widgets/StartButton.dart';
+import '../../Models/MovieModel.dart';
+import 'Widgets/MovieCard.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import '../../Controlers/HomePageController.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key, required this.title}) : super(key: key);
@@ -15,19 +15,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Movie> movies = [];
-  bool show_play = true;
+  bool show_start = true;
+  bool show_body = false;
+
+  HomePageController controller = new HomePageController();
 
   void _getMoviesList() async {
-    final http.Response response = await http.get(
-        Uri.parse("https://desafio-mobile.nyc3.digitaloceanspaces.com/movies"));
-    List<dynamic> raw_movies = jsonDecode(response.body);
-    List<Movie> movies = [];
-    for (var movie in raw_movies) movies.add(Movie.fromJson(movie));
-    movies.sort((Movie a, Movie b) => a.vote_average.compareTo(b.vote_average));
-    movies = new List.from(movies.reversed);
+    List<Movie> temp = await this.controller.getMoviesFromNetwork();
     setState(() {
-      this.movies = movies;
-      this.show_play = false;
+      this.movies = temp;
+      this.show_start = false;
+      this.show_body = true;
     });
   }
 
@@ -46,32 +44,8 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              show_play
-                  ? Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ElevatedButton(
-                            onPressed: _getMoviesList,
-                            child: SizedBox(
-                                width: 100,
-                                height: 100,
-                                child: Icon(
-                                  Icons.play_circle,
-                                  size: 100,
-                                )),
-                            style: ElevatedButton.styleFrom(
-                              shape: CircleBorder(),
-                            ),
-                          ),
-                        ),
-                        Text(
-                          'Click to find the best movies',
-                        ),
-                      ],
-                    )
-                  : Container(),
-              !show_play
+              show_start ? StartButton(callback: _getMoviesList) : Container(),
+              show_body
                   ? Padding(
                       padding: const EdgeInsets.all(15.0),
                       child: Column(
@@ -97,7 +71,6 @@ class _HomePageState extends State<HomePage> {
                 children: List.generate(movies.length,
                     (index) => Center(child: MovieCard(movies[index]))),
               ),
-
               // ListView(
               //   children: []
               //

@@ -1,6 +1,6 @@
-import 'package:desafio_tokenlab/MovieDetailPage/MovieDetailPage.dart';
+import 'package:desafio_tokenlab/Pages/MovieDetailPage/MovieDetailPage.dart';
 import 'package:flutter/material.dart';
-import '../../Models/MovieModel.dart';
+import '../../../Models/MovieModel.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class MovieCard extends StatelessWidget {
