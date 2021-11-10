@@ -71,10 +71,6 @@ class _HomePageState extends State<HomePage> {
                 children: List.generate(movies.length,
                     (index) => Center(child: MovieCard(movies[index]))),
               ),
-              // ListView(
-              //   children: []
-              //
-              // )
             ],
           ),
         ),
