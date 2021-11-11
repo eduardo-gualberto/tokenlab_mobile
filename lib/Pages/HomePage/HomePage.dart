@@ -20,8 +20,14 @@ class _HomePageState extends State<HomePage> {
 
   HomePageController controller = new HomePageController();
 
-  void _getMoviesList() async {
-    List<Movie> temp = await this.controller.getMoviesFromNetwork();
+  Future<void> _getMoviesList() async {
+    print("chamou");
+    List<Movie> temp;
+    try {
+      temp = await this.controller.getMoviesFromNetwork();
+    } catch (e) {
+      throw Exception();
+    }
     setState(() {
       this.movies = temp;
       this.show_start = false;
@@ -39,39 +45,49 @@ class _HomePageState extends State<HomePage> {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
         )),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              show_start ? StartButton(callback: _getMoviesList) : Container(),
-              show_body
-                  ? Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Column(
-                        children: [
-                          Text(
-                            "TMDB's most popular movies",
-                            style: TextStyle(
-                                fontSize: 22, fontWeight: FontWeight.bold),
-                          ),
-                          Divider(
-                            color: Colors.black,
-                          )
-                        ],
-                      ),
-                    )
-                  : Container(),
-              GridView.count(
-                physics: ScrollPhysics(),
-                childAspectRatio: 2 / 3,
-                mainAxisSpacing: 1,
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                children: List.generate(movies.length,
-                    (index) => Center(child: MovieCard(movies[index]))),
-              ),
-            ],
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await Future.delayed(Duration(milliseconds: 400));
+          return _getMoviesList();
+        },
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                show_start
+                    ? StartButton(callback: _getMoviesList)
+                    : Container(),
+                show_body
+                    ? Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Column(
+                          children: [
+                            Text(
+                              "TMDB's most popular movies",
+                              style: TextStyle(
+                                  fontSize: 22, fontWeight: FontWeight.bold),
+                            ),
+                            Divider(
+                              color: Colors.black,
+                            )
+                          ],
+                        ),
+                      )
+                    : Container(),
+                show_body
+                    ? GridView.count(
+                        physics: ScrollPhysics(),
+                        childAspectRatio: 2 / 3,
+                        mainAxisSpacing: 1,
+                        crossAxisCount: 2,
+                        shrinkWrap: true,
+                        children: List.generate(movies.length,
+                            (index) => Center(child: MovieCard(movies[index]))),
+                      )
+                    : Container(),
+              ],
+            ),
           ),
         ),
       ),
