@@ -23,9 +23,12 @@ class MovieDetailPage extends StatelessWidget {
             Container(
               height: 30,
             ),
+            //caso falhe em recuperar a imagem, mostrar placeholder de erro
+            //enquanto ela carrega mostrar widget 'carregando'
             SizedBox(
               child: Image.network(
                 this.movie.poster_url,
+                //aumentar a imagem em 25% (dimensoes originais: 200x300)
                 scale: .75,
                 errorBuilder: (BuildContext context, Object exception,
                     StackTrace? stackTrace) {
@@ -50,6 +53,7 @@ class MovieDetailPage extends StatelessWidget {
             Container(
               height: 10,
             ),
+            //mostrar informação de titulo e de avaliação do filme abaixo da imagem
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

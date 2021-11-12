@@ -14,11 +14,11 @@ class MovieCard extends StatelessWidget {
     this.title = movie.title;
     this.imgUrl = movie.poster_url;
     this.rating = movie.vote_average;
-    print(movie.poster_url);
   }
 
   @override
   Widget build(BuildContext context) {
+    //no caso de click/tap no widget, abrir tela MovieDetailPage
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -31,6 +31,7 @@ class MovieCard extends StatelessWidget {
         child: Column(
           children: [
             Expanded(
+              //caso falhe em carregar é substituida pela imagem de erro
               child: Image.network(
                 this.imgUrl,
                 errorBuilder: (BuildContext context, Object exception,
@@ -39,6 +40,7 @@ class MovieCard extends StatelessWidget {
                 },
                 width: 200,
                 height: 300,
+                //enquanto carrega, mostra um circulo rodando
                 loadingBuilder: (BuildContext context, Widget child,
                     ImageChunkEvent? loadingProgress) {
                   if (loadingProgress == null) {
@@ -55,16 +57,12 @@ class MovieCard extends StatelessWidget {
             Container(
               height: 5,
             ),
-            Flexible(
-              flex: 0,
-              child: Align(
-                alignment: Alignment.center,
-                child: Text(
-                  this.title,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  style: TextStyle(fontSize: 18),
-                ),
+            Center(
+              child: Text(
+                this.title,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: TextStyle(fontSize: 18),
               ),
             ),
           ],

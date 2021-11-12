@@ -21,6 +21,7 @@ class _StartButtonState extends State<StartButton>
   late AnimationController _controller;
   late Animation<double> _animation;
 
+  //setup necessário para animação da mensagem de errro
   @override
   void initState() {
     super.initState();
@@ -34,12 +35,14 @@ class _StartButtonState extends State<StartButton>
 
   void clickedPlay() async {
     setState(() {
+      //quando click em StartButton, esconder ele e mostrar o widget de 'carregando'
       this.show_play = false;
       this.show_loading = true;
     });
     try {
       await widget.callback();
     } catch (e) {
+      //em caso de erro: mostrar widget de erro, começar sua animação e reverter os controles do inicio
       setState(() {
         this.req_error = true;
         this.show_play = true;
@@ -47,9 +50,10 @@ class _StartButtonState extends State<StartButton>
       });
       _controller.forward();
       new Timer(Duration(seconds: 4), () {
-        _controller.animateBack(0.0);
-        setState(() {
-          this.req_error = false;
+        _controller.animateBack(0.0).then((value) {
+          setState(() {
+            this.req_error = false;
+          });
         });
       });
     }
@@ -62,9 +66,10 @@ class _StartButtonState extends State<StartButton>
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        //Botao clicável
         show_play
             ? SizedBox(
-              child: Column(
+                child: Column(
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -87,8 +92,9 @@ class _StartButtonState extends State<StartButton>
                     ),
                   ],
                 ),
-            )
+              )
             : Container(),
+        //widget que indica 'carregando'
         show_loading
             ? Column(children: [
                 SpinKitRing(
@@ -102,6 +108,7 @@ class _StartButtonState extends State<StartButton>
                 )
               ])
             : Container(),
+        //widget de erro, aparece e dentro de 3s é removido novamente
         req_error
             ? FadeTransition(
                 opacity: _animation,
